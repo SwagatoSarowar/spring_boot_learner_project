@@ -4,6 +4,7 @@ import com.learning.store.dtos.ChangePasswordRequest;
 import com.learning.store.dtos.RegisterUserRequest;
 import com.learning.store.dtos.UpdateUserRequest;
 import com.learning.store.dtos.UserDto;
+import com.learning.store.entities.Role;
 import com.learning.store.mappers.UserMapper;
 import com.learning.store.repositories.UserRepository;
 import jakarta.validation.Valid;
@@ -11,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,6 +27,7 @@ import java.util.Set;
 public class UserController {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping
     public List<UserDto> getAllUsers(
@@ -57,7 +60,10 @@ public class UserController {
             );
 
         var user = userMapper.toEntity(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword())); // Password Hashing
+        user.setRole(Role.USER);
         userRepository.save(user);
+
         var userDto = userMapper.toDto(user);
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
 

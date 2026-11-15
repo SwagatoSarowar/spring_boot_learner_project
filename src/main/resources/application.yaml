@@ -1,4 +1,7 @@
 spring:
+  config:
+    import:
+      optional:file:.env[.properties]
   application:
     name: store
   datasource:
@@ -7,3 +10,7 @@ spring:
     password: root
   jpa:
     show-sql: true
+  jwt:
+    secret: ${JWT_SECRET}
+    accessTokenExpiration: 604800 # 7d (for testing) otherwise use -> 300 (5m)
+    refreshTokenExpiration: 604800 # 7d
