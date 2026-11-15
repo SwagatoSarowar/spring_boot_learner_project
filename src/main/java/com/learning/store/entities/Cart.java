@@ -26,6 +26,10 @@ public class Cart {
     @OneToMany(mappedBy = "cart", cascade = CascadeType.MERGE, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<CartItem> items = new LinkedHashSet<>();
 
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+
     public BigDecimal getTotalPrice() {
         return items.stream().map(CartItem::getTotalPrice).reduce(
                 BigDecimal.ZERO, BigDecimal::add);
